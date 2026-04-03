@@ -24,7 +24,7 @@
 #ifndef mtkFileAppender_H
 #define mtkFileAppender_H
 
-#include "mtkAppender.h"
+#include <mtkAbstractAppender.h>
 
 #include <QFile>
 #include <QTextStream>
@@ -37,7 +37,7 @@ MTK_LOGGER_BEGIN_NAMESPACE
  * The file is opened in append mode and kept open for the lifetime
  * of the appender. The stream is flushed after every write.
  */
-class mtkFileAppender : public mtkAppender
+class mtkFileAppender : public mtkAbstractAppender
 {
 public:
     /**

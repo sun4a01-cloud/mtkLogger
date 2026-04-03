@@ -28,6 +28,7 @@
 #include "mtkLoggerLevel.h"
 #include "mtkLoggerMessage.h"
 #include "mtkAbstractAppender.h"
+#include "mtkLoggerExportMacro.h"
 
 #include <QString>
 #include <QMap>
@@ -42,16 +43,16 @@ MTK_LOGGER_BEGIN_NAMESPACE
  *
  * A Logger is identified by a category name such as "" (global), "net",
  * or "net.tcp". Parent-child relationships are inferred from dot notation
- * and resolved entirely by mtkLoggerManager — mtkAbstractLogger has no
+ * and resolved entirely by LoggerManager — AbstractLogger has no
  * awareness of the logger hierarchy.
  *
  * Level filtering is applied here. Subclasses implement processMessage()
  * to define how and when messages are forwarded to Appenders.
  *
- * As the declared friend of mtkAbstractAppender, mtkAbstractLogger is the
+ * As the declared friend of AbstractAppender, AbstractLogger is the
  * only class permitted to call doProcessMessage() on an appender.
  */
-class mtkAbstractLogger
+class MTK_LOGGER_EXPORT AbstractLogger
 {
 public:
     explicit mtkAbstractLogger(const QString& category);

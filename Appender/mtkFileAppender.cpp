@@ -27,7 +27,7 @@
 MTK_LOGGER_BEGIN_NAMESPACE
 
 mtkFileAppender::mtkFileAppender(const QString& filePath, const QString& name)
-    : mtkAppender(name)
+    : mtkAbstractAppender(name)
     , m_file(nullptr)
     , m_stream(nullptr)
 {

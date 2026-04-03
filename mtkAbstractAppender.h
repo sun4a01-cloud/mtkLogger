@@ -27,6 +27,7 @@
 #include "mtkLoggerNamespaceMacro.h"
 #include "mtkLoggerLevel.h"
 #include "mtkLoggerMessage.h"
+#include "mtkLoggerExportMacro.h"
 
 #include <QString>
 #include <QReadWriteLock>
@@ -47,15 +48,15 @@ MTK_LOGGER_BEGIN_NAMESPACE
  *
  * Subclasses must implement processMessage() to perform actual output.
  */
-class mtkAbstractAppender
+class MTK_LOGGER_EXPORT AbstractAppender
 {
 public:
-    explicit mtkAbstractAppender(const QString& name);
-    virtual ~mtkAbstractAppender();
+    explicit AbstractAppender(const QString& name);
+    virtual ~AbstractAppender();
 
     // Non-copyable
-    mtkAbstractAppender(const mtkAbstractAppender&)            = delete;
-    mtkAbstractAppender& operator=(const mtkAbstractAppender&) = delete;
+    AbstractAppender(const AbstractAppender&)            = delete;
+    AbstractAppender& operator=(const AbstractAppender&) = delete;
 
     // ── Identity ────────────────────────────────────────────────────────────
 

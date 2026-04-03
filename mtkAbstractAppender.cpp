@@ -31,7 +31,7 @@ MTK_LOGGER_BEGIN_NAMESPACE
 
 // ── Private implementation ───────────────────────────────────────────────────
 
-struct mtkAbstractAppender::PrivateImp
+struct AbstractAppender::PrivateImp
 {
     QString        name;
     QString        timestampFormat;
@@ -47,16 +47,16 @@ struct mtkAbstractAppender::PrivateImp
 
 // ── Construction ─────────────────────────────────────────────────────────────
 
-mtkAbstractAppender::mtkAbstractAppender(const QString& name)
+AbstractAppender::AbstractAppender(const QString& name)
     : imp(new PrivateImp(name))
 {}
 
-mtkAbstractAppender::~mtkAbstractAppender()
+AbstractAppender::~AbstractAppender()
 {}
 
 // ── Identity ─────────────────────────────────────────────────────────────────
 
-QString mtkAbstractAppender::name() const
+QString AbstractAppender::name() const
 {
     QReadLocker locker(&imp->lock);
     return imp->name;
@@ -64,13 +64,13 @@ QString mtkAbstractAppender::name() const
 
 // ── Timestamp format ─────────────────────────────────────────────────────────
 
-void mtkAbstractAppender::setTimestampFormat(const QString& format)
+void AbstractAppender::setTimestampFormat(const QString& format)
 {
     QWriteLocker locker(&imp->lock);
     imp->timestampFormat = format;
 }
 
-QString mtkAbstractAppender::timestampFormat() const
+QString AbstractAppender::timestampFormat() const
 {
     QReadLocker locker(&imp->lock);
     return imp->timestampFormat;
@@ -78,19 +78,19 @@ QString mtkAbstractAppender::timestampFormat() const
 
 // ── Level filtering ──────────────────────────────────────────────────────────
 
-Level mtkAbstractAppender::detailsLevel() const
+Level AbstractAppender::detailsLevel() const
 {
     QReadLocker locker(&imp->lock);
     return imp->detailsLevel;
 }
 
-void mtkAbstractAppender::setDetailsLevel(Level level)
+void AbstractAppender::setDetailsLevel(Level level)
 {
     QWriteLocker locker(&imp->lock);
     imp->detailsLevel = level;
 }
 
-void mtkAbstractAppender::setDetailsLevel(const QString& levelStr)
+void AbstractAppender::setDetailsLevel(const QString& levelStr)
 {
     bool ok = false;
     Level level = levelFromString(levelStr, &ok);
@@ -100,17 +100,17 @@ void mtkAbstractAppender::setDetailsLevel(const QString& levelStr)
 
 // ── Protected interface (accessible only by AbstractLogger) ──────────────────
 
-QReadWriteLock& mtkAbstractAppender::readWriteLock() const
+QReadWriteLock& AbstractAppender::readWriteLock() const
 {
     return imp->lock;
 }
 
-void mtkAbstractAppender::doProcessMessage(const MessageLogger& msg)
+void AbstractAppender::doProcessMessage(const MessageLogger& msg)
 {
     // Apply the appender's own level filter
     {
         QReadLocker locker(&imp->lock);
-        if (msg.m_level < imp->detailsLevel)
+        if (msg.level() < imp->detailsLevel)
             return;
     }
 
@@ -119,24 +119,24 @@ void mtkAbstractAppender::doProcessMessage(const MessageLogger& msg)
 
 // ── Default formatter ────────────────────────────────────────────────────────
 
-QString mtkAbstractAppender::format(const MessageLogger& msg) const
+QString AbstractAppender::format(const MessageLogger& msg) const
 {
     // [2024-01-01 12:00:00.000] [INFO   ] [module] [category] (file:line func) message
     QReadLocker locker(&imp->lock);
 
-    const QString timestamp = msg.m_timestamp.toString(imp->timestampFormat);
-    const QString level     = levelToString(msg.m_level).leftJustified(7);
-    const QString fileName  = QFileInfo(msg.m_file).fileName();
+    const QString timestamp = msg.timestamp().toString(imp->timestampFormat);
+    const QString level     = levelToString(msg.level()).leftJustified(7);
+    const QString fileName  = QFileInfo(msg.file()).fileName();
 
     return QString("[%1] [%2] [%3] [%4] (%5:%6 %7) %8")
            .arg(timestamp)
            .arg(level)
-           .arg(msg.m_modulename)
-           .arg(msg.m_category)
+           .arg(msg.modulename())
+           .arg(msg.category())
            .arg(fileName)
-           .arg(msg.m_line)
-           .arg(msg.m_function)
-           .arg(msg.m_message);
+           .arg(msg.line())
+           .arg(msg.function())
+           .arg(msg.message());
 }
 
 MTK_LOGGER_END_NAMESPACE

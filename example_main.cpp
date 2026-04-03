@@ -57,41 +57,7 @@ int main(int argc, char* argv[])
 
     auto* mgr = mtkLoggerManager::instance();
 
-    // ── Configure Logger("") — global ───────────────────────────────────────
-    mtkLogger* global = mgr->getLogger("");
-    global->setLevel(Level::Trace);
-    global->addAppender(QSharedPointer<mtkAppender>(
-        new mtkConsoleAppender("console")));
-
-    // ── Configure Logger("net") ──────────────────────────────────────────────
-    mtkLogger* net = mgr->getLogger("net");
-    net->setLevel(Level::Info);
-    net->addAppender(QSharedPointer<mtkAppender>(
-        new mtkFileAppender("net.log", "net-file")));
-
-    // ── Configure Logger("net.tcp") ──────────────────────────────────────────
-    // Inherits "net"'s FileAppender automatically via dot-notation
-    mtkLogger* netTcp = mgr->getLogger("net.tcp");
-    netTcp->setLevel(Level::Warning);
-    netTcp->addAppender(QSharedPointer<mtkAppender>(
-        new mtkRollingFileAppender("net_tcp.log", 5 * 1024 * 1024, 3, "net-tcp-rolling")));
-
-    // ── Emit some log messages ───────────────────────────────────────────────
-
-    // Goes to "" console only (level=Trace, "" logger threshold=Trace)
-    MTK_TRACE("", "core", "Application started");
-
-    // Goes to "net" file only (level=Info >= "net" threshold=Info)
-    MTK_INFO("net", "network", "Network subsystem initialized");
-
-    // Dropped — level=Debug < "net.tcp" threshold=Warning
-    MTK_DEBUG("net.tcp", "network", "This message will be dropped");
-
-    // Goes to "net.tcp" rolling file + inherited "net" file
-    MTK_WARN("net.tcp", "network", "TCP connection timeout");
-
-    // Goes to "net.tcp" rolling file + inherited "net" file
-    MTK_ERROR("net.tcp", "network", "TCP socket error: connection refused");
+    mgr->log(MTK_TRACE("", "", ""), "");
 
     return 0;
 }
