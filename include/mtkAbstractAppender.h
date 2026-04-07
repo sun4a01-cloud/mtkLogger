@@ -21,8 +21,8 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 ============================================================================*/
-#ifndef mtkAbstractAppender_H
-#define mtkAbstractAppender_H
+#ifndef ABSTRACTAPPENDER_H
+#define ABSTRACTAPPENDER_H
 
 #include "mtkLoggerNamespaceMacro.h"
 #include "mtkLoggerLevel.h"
@@ -151,4 +151,4 @@ private:
 
 MTK_LOGGER_END_NAMESPACE
 
-#endif // !mtkAbstractAppender_H
+#endif // !ABSTRACTAPPENDER_H

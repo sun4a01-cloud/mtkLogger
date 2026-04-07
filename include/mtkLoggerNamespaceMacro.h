@@ -21,8 +21,10 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 ============================================================================*/
-#ifndef mtkLoggerNamespaceMacro_H
-#define mtkLoggerNamespaceMacro_H
+#ifndef MTKLOGGERNAMESPACEMACRO_H
+#define MTKLOGGERNAMESPACEMACRO_H
+
+#include <QtCore/QtGlobal>
 
 /* ── Basic namespace keyword wrappers ───────────────────────────────────── */
 
@@ -98,4 +100,4 @@
 
 #endif // !__cpp_if_constexpr >= 201606L
 
-#endif // !mtkLoggerNamespaceMacro_H
+#endif // !MTKLOGGERNAMESPACEMACRO_H

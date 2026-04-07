@@ -21,34 +21,62 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 ============================================================================*/
-#include "mtkConsoleAppender.h"
+#include "Appender/mtkFileAppender.h"
+
+#include <QString>
 #include <QDebug>
 
 MTK_LOGGER_BEGIN_NAMESPACE
 
-mtkConsoleAppender::mtkConsoleAppender(const QString& name)
-    : mtkAppender(name)
+FileAppender::FileAppender(const QString& filePath, const QString& name)
+    : AbstractAppender(name)
+    , m_file(nullptr)
+    , m_stream(nullptr)
 {
+    openFile(filePath);
 }
 
-void mtkConsoleAppender::append(const Msg& msg)
+FileAppender::~FileAppender()
 {
-    const QString line = format(msg);
-
-    switch (msg.m_level)
-    {
-    case Level::Trace:
-    case Level::Debug:
-        qDebug().noquote()    << line; break;
-    case Level::Info:
-        qInfo().noquote()     << line; break;
-    case Level::Warning:
-        qWarning().noquote()  << line; break;
-    case Level::Error:
-        qCritical().noquote() << line; break;
-    case Level::Fatal:
-        qFatal("%s", qPrintable(line)); break;
+    if (m_file && m_file->isOpen()) {
+        m_stream->flush();
+        m_file->close();
     }
+    delete m_stream;
+    delete m_file;
+}
+
+bool FileAppender::isOpen() const
+{
+    return m_file && m_file->isOpen();
+}
+
+QString FileAppender::filePath() const
+{
+    return m_file ? m_file->fileName() : QString();
+}
+
+bool FileAppender::openFile(const QString& filePath)
+{
+    m_file = new QFile(filePath);
+    if (!m_file->open(QIODevice::Append | QIODevice::Text)) {
+        qWarning() << "[mtkFileAppender] Failed to open log file:" << filePath;
+        delete m_file;
+        m_file = nullptr;
+        return false;
+    }
+    m_stream = new QTextStream(m_file);
+    m_stream->setCodec("UTF-8");
+    return true;
+}
+
+void FileAppender::processMessage(const MessageLogger& msg)
+{
+    if (!m_stream)
+        return;
+
+    *m_stream << format(msg) << '\n';
+    m_stream->flush();
 }
 
 MTK_LOGGER_END_NAMESPACE

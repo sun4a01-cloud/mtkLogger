@@ -21,8 +21,8 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 ============================================================================*/
-#ifndef mtkAbstractLogger_H
-#define mtkAbstractLogger_H
+#ifndef ABSTRACTLOGGER_H
+#define ABSTRACTLOGGER_H
 
 #include "mtkLoggerNamespaceMacro.h"
 #include "mtkLoggerLevel.h"
@@ -50,17 +50,17 @@ MTK_LOGGER_BEGIN_NAMESPACE
  * to define how and when messages are forwarded to Appenders.
  *
  * As the declared friend of AbstractAppender, AbstractLogger is the
- * only class permitted to call doProcessMessage() on an appender.
+ * only class permitted to call doProcessMessage() and processMessage().
  */
 class MTK_LOGGER_EXPORT AbstractLogger
 {
 public:
-    explicit mtkAbstractLogger(const QString& category);
-    virtual ~mtkAbstractLogger() = default;
+    explicit AbstractLogger(const QString& category);
+    virtual ~AbstractLogger();
 
     // Non-copyable
-    mtkAbstractLogger(const mtkAbstractLogger&)            = delete;
-    mtkAbstractLogger& operator=(const mtkAbstractLogger&) = delete;
+    AbstractLogger(const AbstractLogger&)            = delete;
+    AbstractLogger& operator=(const AbstractLogger&) = delete;
 
     // ── Identity ─────────────────────────────────────────────────────────────
 
@@ -69,7 +69,7 @@ public:
      */
     QString category() const;
 
-    // ── Level control ─────────────────────────────────────────────────────────
+    // ── Level control ─────────────────────────────────────────────────────────────
 
     /**
      * @brief Sets the minimum level this logger will process.
@@ -83,13 +83,13 @@ public:
      */
     bool  isEnabled(Level level) const;
 
-    // ── Appender management ───────────────────────────────────────────────────
+    // ── Appender management ───────────────────────────────────────────────────────
 
     /**
      * @brief Adds an appender keyed by its name.
      *        If an appender with the same name already exists, it is replaced.
      */
-    void addAppender(const QSharedPointer<mtkAbstractAppender>& appender);
+    void addAppender(const QSharedPointer<AbstractAppender>& appender);
 
     /**
      * @brief Removes the appender with the given name, if present.
@@ -104,14 +104,14 @@ public:
     /**
      * @brief Returns all appenders registered on this logger.
      */
-    QList<QSharedPointer<mtkAbstractAppender>> appenders() const;
+    QList<QSharedPointer<AbstractAppender>> appenders() const;
 
-    // ── Logging ───────────────────────────────────────────────────────────────
+    // ── Logging ───────────────────────────────────────────────────────────────────
 
     /**
      * @brief Applies the level filter and delegates to processMessage().
      *
-     * Called by mtkLoggerManager for each Logger in the resolved hierarchy.
+     * Called by LoggerManager for each Logger in the resolved hierarchy.
      * The Logger has no knowledge of its ancestors or siblings.
      *
      * @param msg The message to process.
@@ -133,9 +133,9 @@ protected:
 private:
     QString                                            m_category;
     Level                                              m_level;
-    QMap<QString, QSharedPointer<mtkAbstractAppender>> m_appenders;
+    QMap<QString, QSharedPointer<AbstractAppender>> m_appenders;
 };
 
 MTK_LOGGER_END_NAMESPACE
 
-#endif // !mtkAbstractLogger_H
+#endif // !ABSTRACTLOGGER_H

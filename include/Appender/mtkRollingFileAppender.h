@@ -41,7 +41,7 @@ MTK_LOGGER_BEGIN_NAMESPACE
  *   app.2.log
  *   app.3.log        ← oldest backup (deleted on next roll)
  */
-class mtkRollingFileAppender : public mtkFileAppender
+class RollingFileAppender : public FileAppender
 {
 public:
     /**
@@ -51,7 +51,7 @@ public:
      * @param maxBackupCount Number of backup files to retain (default: 5).
      * @param name           Appender identifier (default: "rollingFile").
      */
-    explicit mtkRollingFileAppender(
+    explicit RollingFileAppender(
         const QString& filePath,
         qint64         maxFileSize    = 10 * 1024 * 1024,
         int            maxBackupCount = 5,
@@ -70,7 +70,7 @@ public:
     void setMaxBackupCount(int count);
 
 protected:
-    void append(const Msg& msg) override;
+  virtual void processMessage(const MessageLogger& msg) override;
 
 private:
     /**

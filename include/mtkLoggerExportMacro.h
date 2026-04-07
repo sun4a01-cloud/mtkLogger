@@ -21,60 +21,31 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 ============================================================================*/
-#include "mtkFileAppender.h"
-#include <QDebug>
+#ifndef mtkLoggerExportMacro_H
+#define mtkLoggerExportMacro_H
 
-MTK_LOGGER_BEGIN_NAMESPACE
+#include <QtCore/QtGlobal>
 
-mtkFileAppender::mtkFileAppender(const QString& filePath, const QString& name)
-    : mtkAbstractAppender(name)
-    , m_file(nullptr)
-    , m_stream(nullptr)
-{
-    openFile(filePath);
-}
+/**
+ * @brief DLL export / import macro for the mtkLogger library.
+ *
+ * When building mtkLogger as a shared library, define MTK_LOGGER_EXPORTS
+ * in the project (.pro or CMakeLists.txt) to export symbols:
+ *
+ *   DEFINES += MTK_LOGGER_EXPORTS
+ *
+ * Consumers of the shared library do not need to define anything ¡ª
+ * MTK_LOGGER_EXPORT will automatically resolve to Q_DECL_IMPORT.
+ *
+ * When building as a static library or including sources directly,
+ * MTK_LOGGER_EXPORT expands to nothing.
+ */
+#if defined(MTK_LOGGER_STATIC)
+#  define MTK_LOGGER_EXPORT
+#elif defined(MTK_LOGGER_EXPORTS)
+#  define MTK_LOGGER_EXPORT Q_DECL_EXPORT
+#else
+#  define MTK_LOGGER_EXPORT Q_DECL_IMPORT
+#endif
 
-mtkFileAppender::~mtkFileAppender()
-{
-    if (m_file && m_file->isOpen()) {
-        m_stream->flush();
-        m_file->close();
-    }
-    delete m_stream;
-    delete m_file;
-}
-
-bool mtkFileAppender::isOpen() const
-{
-    return m_file && m_file->isOpen();
-}
-
-QString mtkFileAppender::filePath() const
-{
-    return m_file ? m_file->fileName() : QString();
-}
-
-bool mtkFileAppender::openFile(const QString& filePath)
-{
-    m_file = new QFile(filePath);
-    if (!m_file->open(QIODevice::Append | QIODevice::Text)) {
-        qWarning() << "[mtkFileAppender] Failed to open log file:" << filePath;
-        delete m_file;
-        m_file = nullptr;
-        return false;
-    }
-    m_stream = new QTextStream(m_file);
-    m_stream->setCodec("UTF-8");
-    return true;
-}
-
-void mtkFileAppender::append(const Msg& msg)
-{
-    if (!m_stream)
-        return;
-
-    *m_stream << format(msg) << '\n';
-    m_stream->flush();
-}
-
-MTK_LOGGER_END_NAMESPACE
+#endif // !mtkLoggerExportMacro_H

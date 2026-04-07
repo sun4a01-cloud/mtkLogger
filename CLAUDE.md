@@ -33,13 +33,13 @@ make -j
 
 ### 三层设计模式
 
-1. **mtkLoggerManager（单例管理器）**
+1. **LoggerManager（单例管理器）**
    - 负责创建和管理所有 Logger 实例
    - 实现基于点号分隔的层级继承（如 "net.tcp" 继承 "net"）
    - 线程安全的 Logger 注册表
    - 关键方法：`getLogger(category)`, `log(msg, category)`
 
-2. **mtkAbstractLogger（抽象日志器）**
+2. **AbstractLogger（抽象日志器）**
    - 每个 Logger 有独立的 category 名称和 Level 阈值
    - 管理多个 Appender（输出目标）
    - 层级继承：子 Logger 自动继承父 Logger 的 Appenders
@@ -60,7 +60,7 @@ make -j
 ```
 用户代码 → MessageLogger (RAII)
          ↓
-    mtkLoggerManager::log()
+    LoggerManager::log()
          ↓
     解析层级关系 ("net.tcp" → ["net.tcp", "net"])
          ↓
@@ -77,7 +77,7 @@ make -j
 
 ### MessageLogger（消息对象）
 
-- 使用 RAII 模式：析构时自动推送到 mtkLoggerManager
+- 使用 RAII 模式：析构时自动推送到 LoggerManager
 - 支持三种写入方式：
   - `write(QString)`: 直接赋值
   - `write(const char*, ...)`: printf 风格格式化
@@ -98,7 +98,7 @@ make -j
 - 每个 Logger 和 Appender 都有独立的 Level 阈值，双重过滤
 
 ### 线程安全
-- mtkLoggerManager 使用 QMutex 保护 Logger 注册表
+- LoggerManager 使用 QMutex 保护 Logger 注册表
 - 每个 Appender 内部有 QReadWriteLock
 - AbstractLogger 在调用 Appender 前可以获取锁
 
@@ -110,7 +110,7 @@ make -j
 
 ### 类型别名
 - 在示例代码中使用了简化别名（如 `mtkLogger`, `mtkAppender`, `Msg`）
-- 实际类名为 `mtkAbstractLogger`, `mtkAbstractAppender`, `MessageLogger`
+- 实际类名为 `AbstractLogger`, `mtkAbstractAppender`, `MessageLogger`
 
 ### 头文件包含
 - 根目录和 Appender/ 子目录都在 include path 中
@@ -125,6 +125,6 @@ make -j
 4. 在 CMakeLists.txt 中添加源文件
 
 ### 添加新的 Logger 类型
-1. 继承 `mtkAbstractLogger`
+1. 继承 `AbstractLogger`
 2. 实现 `processMessage(const MessageLogger&)` 方法
 3. 定义 Appender 调度策略（如同步/异步）

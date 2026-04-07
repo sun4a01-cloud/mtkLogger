@@ -21,45 +21,21 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 ============================================================================*/
-#include "mtkLoggerMessage.h"
-#include "mtkLoggerManager.h"
-
-#include <cstdarg>
+#include "mtkLogger.h"
 
 MTK_LOGGER_BEGIN_NAMESPACE
 
-// ── Destructor: push stream to LoggerManager ─────────────────────────────────
+Logger::Logger(const QString& category)
+    : AbstractLogger(category)
+{}
 
-MessageLogger::~MessageLogger()
+Logger::~Logger() = default;
+
+void Logger::processMessage(const MessageLogger& msg)
 {
-    // Only dispatch if there is something to log
-    if (m_message.isEmpty())
-        return;
-
-    mtkLoggerManager::instance()->log(*this, m_category);
-}
-
-// ── write() overloads ────────────────────────────────────────────────────────
-
-void MessageLogger::write(const QString& msg)
-{
-    m_message = msg;
-}
-
-void MessageLogger::write(const char* fmt, ...)
-{
-    va_list args;
-    va_start(args, fmt);
-    m_message = QString::vasprintf(fmt, args);
-    va_end(args);
-}
-
-QDebug MessageLogger::write()
-{
-    // QDebug bound to m_message: every << operator appends directly into it.
-    // The QDebug object is destroyed at the end of the calling expression,
-    // flushing its internal buffer into m_message before ~MessageLogger runs.
-    return QDebug(&m_message);
+    const auto appenderList = appenders();
+    for (const auto& appender : appenderList)
+        appender->doProcessMessage(msg);
 }
 
 MTK_LOGGER_END_NAMESPACE

@@ -26,6 +26,7 @@
 
 #include "mtkLoggerNamespaceMacro.h"
 #include "mtkLoggerLevel.h"
+#include "mtkLoggerExportMacro.h"
 
 #include <QString>
 #include <QDateTime>
@@ -36,41 +37,41 @@ MTK_LOGGER_BEGIN_NAMESPACE
 /**
  * @brief Null object implementation of the log message stream.
  *
- * mtkNullMessageLogger mirrors the full public interface of MessageLogger
+ * NullMessageLogger mirrors the full public interface of MessageLogger
  * so that logging macros can substitute it transparently when the requested
  * level does not pass the current filter. All operations are no-ops and
- * the destructor does not push anything to mtkLoggerManager.
+ * the destructor does not push anything to LoggerManager.
  *
  * Typical macro pattern:
  * @code
  * #define LOG_TRACE \
  *     (condition) ? MessageLogger(Level::Trace, ...).write() \
- *                 : mtkNullMessageLogger().write()
+ *                 : NullMessageLogger().write()
  * @endcode
  */
-class mtkNullMessageLogger
+class MTK_LOGGER_EXPORT NullMessageLogger
 {
 public:
     /**
      * @brief Mirrors the MessageLogger constructor signature.
      *        All arguments are accepted and silently discarded.
      */
-    inline mtkNullMessageLogger(Level            = Level::Trace,
-                                const QString&   = QString(),
-                                int              = 0,
-                                const QString&   = QString(),
-                                const QString&   = QString(),
-                                const QString&   = QString(),
-                                const QString&   = QString(),
-                                const QDateTime& = QDateTime())
+    inline NullMessageLogger(Level            = Level::Trace,
+                             const QString&   = QString(),
+                             int              = 0,
+                             const QString&   = QString(),
+                             const QString&   = QString(),
+                             const QString&   = QString(),
+                             const QString&   = QString(),
+                             const QDateTime& = QDateTime())
     {}
 
     /** @brief No-op destructor — nothing is pushed to any logger. */
-    ~mtkNullMessageLogger() = default;
+    ~NullMessageLogger() = default;
 
     // Non-copyable
-    mtkNullMessageLogger(const mtkNullMessageLogger&)            = delete;
-    mtkNullMessageLogger& operator=(const mtkNullMessageLogger&) = delete;
+    NullMessageLogger(const NullMessageLogger&)            = delete;
+    NullMessageLogger& operator=(const NullMessageLogger&) = delete;
 
     // ── No-op stream interfaces (mirroring MessageLogger::write) ─────────────
 

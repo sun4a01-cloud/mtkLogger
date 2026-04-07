@@ -23,50 +23,52 @@
 ============================================================================*/
 #include "mtkAbstractLogger.h"
 
+#include <QString>
+
 MTK_LOGGER_BEGIN_NAMESPACE
 
-mtkAbstractLogger::mtkAbstractLogger(const QString& category)
+AbstractLogger::AbstractLogger(const QString& category)
     : m_category(category)
     , m_level(Level::Debug)
 {}
 
 // ── Identity ─────────────────────────────────────────────────────────────────
 
-QString mtkAbstractLogger::category() const { return m_category; }
+QString AbstractLogger::category() const { return m_category; }
 
 // ── Level control ─────────────────────────────────────────────────────────────
 
-Level mtkAbstractLogger::level()             const { return m_level;        }
-void  mtkAbstractLogger::setLevel(Level level)     { m_level = level;       }
-bool  mtkAbstractLogger::isEnabled(Level level) const { return level >= m_level; }
+Level AbstractLogger::level()             const { return m_level;        }
+void  AbstractLogger::setLevel(Level level)     { m_level = level;       }
+bool  AbstractLogger::isEnabled(Level level) const { return level >= m_level; }
 
 // ── Appender management ───────────────────────────────────────────────────────
 
-void mtkAbstractLogger::addAppender(const QSharedPointer<mtkAbstractAppender>& appender)
+void AbstractLogger::addAppender(const QSharedPointer<AbstractAppender>& appender)
 {
     if (!appender)
         return;
     m_appenders.insert(appender->name(), appender);
 }
 
-void mtkAbstractLogger::removeAppender(const QString& appenderName)
+void AbstractLogger::removeAppender(const QString& appenderName)
 {
     m_appenders.remove(appenderName);
 }
 
-bool mtkAbstractLogger::hasAppender(const QString& appenderName) const
+bool AbstractLogger::hasAppender(const QString& appenderName) const
 {
     return m_appenders.contains(appenderName);
 }
 
-QList<QSharedPointer<mtkAbstractAppender>> mtkAbstractLogger::appenders() const
+QList<QSharedPointer<AbstractAppender>> AbstractLogger::appenders() const
 {
     return m_appenders.values();
 }
 
 // ── Logging ───────────────────────────────────────────────────────────────────
 
-void mtkAbstractLogger::log(const MessageLogger& msg)
+void AbstractLogger::log(const MessageLogger& msg)
 {
     // Level filter — drop messages below this logger's threshold
     if (!isEnabled(msg.level()))

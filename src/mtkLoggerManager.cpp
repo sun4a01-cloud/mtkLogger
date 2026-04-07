@@ -22,28 +22,30 @@
   THE SOFTWARE.
 ============================================================================*/
 #include "mtkLoggerManager.h"
+
+#include <QString>
 #include <QMutexLocker>
 
 MTK_LOGGER_BEGIN_NAMESPACE
 
 // ── Static members ────────────────────────────────────────────────────────────
 
-mtkLoggerManager* mtkLoggerManager::m_instance      = nullptr;
-QMutex            mtkLoggerManager::m_instanceMutex;
+LoggerManager* LoggerManager::m_instance      = nullptr;
+QMutex            LoggerManager::m_instanceMutex;
 
 // ── Singleton ─────────────────────────────────────────────────────────────────
 
-mtkLoggerManager* mtkLoggerManager::instance()
+LoggerManager* LoggerManager::instance()
 {
     QMutexLocker locker(&m_instanceMutex);
     if (!m_instance)
-        m_instance = new mtkLoggerManager();
+        m_instance = new LoggerManager();
     return m_instance;
 }
 
 // ── Logger registry ───────────────────────────────────────────────────────────
 
-mtkAbstractLogger* mtkLoggerManager::getLogger(const QString& category)
+AbstractLogger* LoggerManager::getLogger(const QString& category)
 {
     QMutexLocker locker(&m_mutex);
 
@@ -51,18 +53,19 @@ mtkAbstractLogger* mtkLoggerManager::getLogger(const QString& category)
     if (it != m_loggers.end())
         return it->data();
 
-    QSharedPointer<mtkAbstractLogger> logger(new mtkAbstractLogger(category));
-    m_loggers.insert(category, logger);
-    return logger.data();
+    //QSharedPointer<AbstractLogger> logger(new AbstractLogger(category));
+    //m_loggers.insert(category, logger);
+    //return logger.data();
+    return nullptr;
 }
 
-bool mtkLoggerManager::hasLogger(const QString& category) const
+bool LoggerManager::hasLogger(const QString& category) const
 {
     QMutexLocker locker(&m_mutex);
     return m_loggers.contains(category);
 }
 
-void mtkLoggerManager::removeLogger(const QString& category)
+void LoggerManager::removeLogger(const QString& category)
 {
     QMutexLocker locker(&m_mutex);
     m_loggers.remove(category);
@@ -70,7 +73,7 @@ void mtkLoggerManager::removeLogger(const QString& category)
 
 // ── Dispatching ───────────────────────────────────────────────────────────────
 
-void mtkLoggerManager::log(const MessageLogger& msg, const QString& category)
+void LoggerManager::log(const MessageLogger& msg, const QString& category)
 {
     // Dispatch to the target logger
     getLogger(category)->log(msg);
@@ -86,7 +89,7 @@ void mtkLoggerManager::log(const MessageLogger& msg, const QString& category)
 
 // ── Private helpers ───────────────────────────────────────────────────────────
 
-QString mtkLoggerManager::parentCategory(const QString& category)
+QString LoggerManager::parentCategory(const QString& category)
 {
     const int lastDot = category.lastIndexOf(QLatin1Char('.'));
     if (lastDot <= 0)

@@ -21,12 +21,13 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 ============================================================================*/
-#ifndef mtkLoggerManager_H
-#define mtkLoggerManager_H
+#ifndef LoggerManager_H
+#define LoggerManager_H
 
 #include "mtkLoggerNamespaceMacro.h"
 #include "mtkAbstractLogger.h"
 #include "mtkLoggerMessage.h"
+#include "mtkLoggerExportMacro.h"
 
 #include <QString>
 #include <QMap>
@@ -41,8 +42,8 @@ MTK_LOGGER_BEGIN_NAMESPACE
  *
  * Usage:
  * @code
- *   auto* mgr = mtkLoggerManager::instance();
- *   mtkAbstractLogger* net = mgr->getLogger("net");
+ *   auto* mgr = LoggerManager::instance();
+ *   AbstractLogger* net = mgr->getLogger("net");
  *   net->addAppender(...);
  *   mgr->log(msg, "net.tcp");   // dispatches through "net.tcp" -> "net"
  * @endcode
@@ -52,21 +53,21 @@ MTK_LOGGER_BEGIN_NAMESPACE
  *   "net"      -> ancestors: []  (does NOT default to "")
  *   ""         -> ancestors: []
  */
-class mtkLoggerManager
+class MTK_LOGGER_EXPORT LoggerManager
 {
 public:
     /** @brief Returns the singleton instance. */
-    static mtkLoggerManager* instance();
+    static LoggerManager* instance();
 
     // Non-copyable
-    mtkLoggerManager(const mtkLoggerManager&)            = delete;
-    mtkLoggerManager& operator=(const mtkLoggerManager&) = delete;
+    LoggerManager(const LoggerManager&)            = delete;
+    LoggerManager& operator=(const LoggerManager&) = delete;
 
     /**
      * @brief Returns the logger for the given category, creating it if needed.
      * @param category Logger name, e.g. "", "net", "net.tcp".
      */
-    mtkAbstractLogger* getLogger(const QString& category);
+    AbstractLogger* getLogger(const QString& category);
 
     /**
      * @brief Returns true if a logger with the given category already exists.
@@ -83,7 +84,7 @@ public:
      * @brief Dispatches a MessageLogger through the logger hierarchy.
      *
      * Resolves all ancestor loggers via dot-notation, collects their
-     * appenders, then calls mtkAbstractLogger::log() with the inherited set.
+     * appenders, then calls AbstractLogger::log() with the inherited set.
      *
      * @param msg      The log message.
      * @param category The originating logger category.
@@ -91,7 +92,7 @@ public:
     void log(const MessageLogger& msg, const QString& category);
 
 private:
-    mtkLoggerManager() = default;
+    LoggerManager() = default;
 
     /**
      * @brief Returns the direct parent category string.
@@ -102,13 +103,13 @@ private:
      */
     static QString parentCategory(const QString& category);
 
-    static mtkLoggerManager* m_instance;
+    static LoggerManager* m_instance;
     static QMutex            m_instanceMutex;
 
     mutable QMutex                                       m_mutex;
-    QMap<QString, QSharedPointer<mtkAbstractLogger>>     m_loggers;
+    QMap<QString, QSharedPointer<AbstractLogger>>     m_loggers;
 };
 
 MTK_LOGGER_END_NAMESPACE
 
-#endif // !mtkLoggerManager_H
+#endif // !LoggerManager_H

@@ -21,7 +21,7 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 ============================================================================*/
-#include "mtkRollingFileAppender.h"
+#include "Appender/mtkRollingFileAppender.h"
 
 #include <QFile>
 #include <QFileInfo>
@@ -30,33 +30,33 @@
 
 MTK_LOGGER_BEGIN_NAMESPACE
 
-mtkRollingFileAppender::mtkRollingFileAppender(const QString& filePath,
+RollingFileAppender::RollingFileAppender(const QString& filePath,
                                                qint64         maxFileSize,
                                                int            maxBackupCount,
                                                const QString& name)
-    : mtkFileAppender(filePath, name)
+    : FileAppender(filePath, name)
     , m_basePath(filePath)
     , m_maxFileSize(maxFileSize)
     , m_maxBackupCount(maxBackupCount)
 {
 }
 
-qint64 mtkRollingFileAppender::maxFileSize() const  { return m_maxFileSize; }
-void   mtkRollingFileAppender::setMaxFileSize(qint64 bytes) { m_maxFileSize = bytes; }
+qint64 RollingFileAppender::maxFileSize() const  { return m_maxFileSize; }
+void   RollingFileAppender::setMaxFileSize(qint64 bytes) { m_maxFileSize = bytes; }
 
-int  mtkRollingFileAppender::maxBackupCount() const { return m_maxBackupCount; }
-void mtkRollingFileAppender::setMaxBackupCount(int count)   { m_maxBackupCount = count; }
+int  RollingFileAppender::maxBackupCount() const { return m_maxBackupCount; }
+void RollingFileAppender::setMaxBackupCount(int count)   { m_maxBackupCount = count; }
 
-void mtkRollingFileAppender::append(const Msg& msg)
+void RollingFileAppender::processMessage(const MessageLogger& msg)
 {
     // Check whether the current file exceeds the size limit
     if (m_file && m_file->size() >= m_maxFileSize)
         rollOver();
 
-    mtkFileAppender::append(msg);
+    FileAppender::processMessage(msg);
 }
 
-void mtkRollingFileAppender::rollOver()
+void RollingFileAppender::rollOver()
 {
     // Flush and close the current file
     if (m_stream) {

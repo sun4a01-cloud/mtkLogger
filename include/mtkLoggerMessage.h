@@ -26,6 +26,7 @@
 
 #include "mtkLoggerNamespaceMacro.h"
 #include "mtkLoggerLevel.h"
+#include "mtkLoggerExportMacro.h"
 
 #include <QString>
 #include <QDateTime>
@@ -48,9 +49,9 @@ MTK_LOGGER_BEGIN_NAMESPACE
  *                               @endcode
  *
  * On destruction, the accumulated message is automatically pushed to
- * mtkLoggerManager, making the temporary object pattern safe and concise.
+ * LoggerManager, making the temporary object pattern safe and concise.
  */
-class MessageLogger
+class MTK_LOGGER_EXPORT MessageLogger
 {
 public:
     /**
@@ -76,7 +77,7 @@ public:
     {}
 
     /**
-     * @brief Destructor — pushes the completed message to mtkLoggerManager.
+     * @brief Destructor — pushes the completed message to LoggerManager.
      *
      * This is the automatic push-stream trigger. When the temporary
      * MessageLogger goes out of scope (end of log statement), the

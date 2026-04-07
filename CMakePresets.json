@@ -1,0 +1,87 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "windows-base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "G:/mtkLogger-build/${presetName}",
+      "installDir": "G:/mtkLogger-install/${presetName}",
+      "cacheVariables": {
+        "CMAKE_PREFIX_PATH": "D:/Qt/Qt5.12.10/5.12.10/msvc2017_64"
+      }
+    },
+    {
+      "name": "windows-debug",
+      "displayName": "Windows Debug",
+      "description": "Windows Debug build with MSVC",
+      "inherits": "windows-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCToolsInstallDir}/cmake/MSVC.cmake"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "windows-release",
+      "displayName": "Windows Release",
+      "description": "Windows Release build with MSVC",
+      "inherits": "windows-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "windows-relwithdebinfo",
+      "displayName": "Windows RelWithDebInfo",
+      "description": "Windows Release with Debug Info build",
+      "inherits": "windows-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "windows-debug-build",
+      "displayName": "Build Debug",
+      "configurePreset": "windows-debug"
+    },
+    {
+      "name": "windows-release-build",
+      "displayName": "Build Release",
+      "configurePreset": "windows-release"
+    },
+    {
+      "name": "windows-relwithdebinfo-build",
+      "displayName": "Build RelWithDebInfo",
+      "configurePreset": "windows-relwithdebinfo"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "windows-debug-test",
+      "displayName": "Test Debug",
+      "configurePreset": "windows-debug"
+    },
+    {
+      "name": "windows-release-test",
+      "displayName": "Test Release",
+      "configurePreset": "windows-release"
+    }
+  ]
+}

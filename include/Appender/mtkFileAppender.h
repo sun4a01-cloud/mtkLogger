@@ -21,36 +21,54 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 ============================================================================*/
-#ifndef mtkConsoleAppender_H
-#define mtkConsoleAppender_H
+#ifndef mtkFileAppender_H
+#define mtkFileAppender_H
 
-#include "mtkAppender.h"
+#include <mtkAbstractAppender.h>
+
+#include <QFile>
+#include <QTextStream>
 
 MTK_LOGGER_BEGIN_NAMESPACE
 
 /**
- * @brief Appender that writes formatted log messages to the console.
+ * @brief Appender that writes formatted log messages to a plain file.
  *
- * Output is routed through Qt's message handler:
- *   Trace / Debug            → qDebug()
- *   Info                     → qInfo()
- *   Warning                  → qWarning()
- *   Error                    → qCritical()
- *   Fatal                    → qFatal()
+ * The file is opened in append mode and kept open for the lifetime
+ * of the appender. The stream is flushed after every write.
  */
-class mtkConsoleAppender : public mtkAppender
+class FileAppender : public AbstractAppender
 {
 public:
     /**
-     * @brief Constructs a ConsoleAppender with the given name.
-     * @param name Appender identifier (default: "console").
+     * @brief Constructs a FileAppender.
+     * @param filePath Absolute or relative path to the log file.
+     * @param name     Appender identifier (default: "file").
      */
-    explicit mtkConsoleAppender(const QString& name = QStringLiteral("console"));
+    explicit FileAppender(const QString& filePath,
+                             const QString& name = QStringLiteral("file"));
+    ~FileAppender() override;
+
+    /**
+     * @brief Returns true if the log file was successfully opened.
+     */
+    bool isOpen() const;
+
+    /**
+     * @brief Returns the path of the log file.
+     */
+    QString filePath() const;
 
 protected:
-    void append(const Msg& msg) override;
+  virtual void processMessage(const MessageLogger& msg) override;
+
+    QFile*       m_file;
+    QTextStream* m_stream;
+
+private:
+    bool openFile(const QString& filePath);
 };
 
 MTK_LOGGER_END_NAMESPACE
 
-#endif // !mtkConsoleAppender_H
+#endif // !mtkFileAppender_H

@@ -23,6 +23,8 @@
 ============================================================================*/
 #include "mtkAbstractAppender.h"
 
+#include <QMutexLocker>
+
 #include <QReadLocker>
 #include <QWriteLocker>
 #include <QFileInfo>
